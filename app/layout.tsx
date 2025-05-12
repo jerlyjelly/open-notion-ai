@@ -48,8 +48,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/opengraph.png', // Example: replace with your actual image path
-        width: 1200,
-        height: 630,
+        width: 1377,
+        height: 689,
         alt: 'OpenNotionAI Logo and promotional banner',
       },
     ],
