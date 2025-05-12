@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     // Replace with the actual path to your OG image in /public (1200x630 recommended)
     images: [
       {
-        url: '/logo-light.png', // Example: replace with your actual image path
+        url: '/opengraph.png', // Example: replace with your actual image path
         width: 1200,
         height: 630,
         alt: 'OpenNotionAI Logo and promotional banner',
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: 'OpenNotionAI | Open source alternative to Notion AI',
     description: 'Open source alternative to Notion AI. Connect your LLM and chat with your Notion database.',
     // Replace with the actual path to your Twitter image in /public (same as og:image often works)
-    images: ['/logo-light.png'], // Example: replace with your actual image path
+    images: ['/opengraph.png'], // Example: replace with your actual image path
     // Optional: Add your Twitter handle
     // site: '@YourTwitterSiteHandle',
     // creator: '@YourTwitterCreatorHandle',
