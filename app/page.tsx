@@ -1,9 +1,10 @@
-'use client'; // Assuming some interactions might need client components, icons are often better this way.
+'use client';
 
 import {
   useState,
-  useEffect
-} from 'react'; // Added hooks for theme toggle
+  useEffect,
+  useRef // Added for click outside detection
+} from 'react';
 import {
   ChevronDown,
   Sun,
@@ -15,9 +16,10 @@ import {
   Search,
   Brain,
   ImageIcon,
-  PanelLeftOpen // Added Menu icon
+  PanelLeftOpen
 } from 'lucide-react';
-import CollapsibleSidebar from "@/components/collapsible-sidebar"; // Adjusted path assuming 'components' is aliased or directly under root for app dir structure. If not, will be '../components/collapsible-sidebar'
+import CollapsibleSidebar from "@/components/collapsible-sidebar";
+import UserProfileDropdown from '@/components/user-profile-dropdown'; // Import the new component
 
 // A placeholder for your i18n function
 // You'll need to replace this with your actual i18n implementation
@@ -30,31 +32,64 @@ const t = (key: string, defaultValue?: string) => {
       "home.askAnythingPlaceholder": "Ask anything",
       "home.searchAction": "Search",
       "home.deepResearchAction": "Deep research",
-      "home.createImageAction": "Create image"
+      "home.createImageAction": "Create image",
+      "header.toggleSidebar": "Toggle sidebar",
+      // Add new keys for UserProfileDropdown if they are not already in its own t function
+      'userDropdown.upgradePlan': 'Upgrade Plan',
+      'userDropdown.tasks': 'Tasks',
+      'userDropdown.myGpts': 'My GPTs',
+      'userDropdown.customizeChatGPT': 'Customize ChatGPT',
+      'userDropdown.settings': 'Settings',
+      'userDropdown.keyboardShortcuts': 'Keyboard shortcuts',
+      'userDropdown.helpAndFaq': 'Help & FAQ',
+      'userDropdown.releaseNotes': 'Release notes',
+      'userDropdown.termsAndPolicies': 'Terms & policies',
+      'userDropdown.getSearchExtension': 'Get ChatGPT search extension',
+      'userDropdown.logout': 'Log out',
     },
-    // Add other languages here, e.g., 'ko'
     ko: {
       "header.chatModelName": "ChatGPT 4o",
       "avatar.plus": "플러스",
       "home.askAnythingPlaceholder": "무엇이든 물어보세요",
       "home.searchAction": "검색",
       "home.deepResearchAction": "심층 연구",
-      "home.createImageAction": "이미지 생성"
+      "home.createImageAction": "이미지 생성",
+      "header.toggleSidebar": "사이드바 토글",
+      'userDropdown.upgradePlan': '플랜 업그레이드',
+      'userDropdown.tasks': '작업',
+      'userDropdown.myGpts': '내 GPTs',
+      'userDropdown.customizeChatGPT': 'ChatGPT 맞춤설정',
+      'userDropdown.settings': '설정',
+      'userDropdown.keyboardShortcuts': '키보드 단축키',
+      'userDropdown.helpAndFaq': '도움말 및 FAQ',
+      'userDropdown.releaseNotes': '릴리스 노트',
+      'userDropdown.termsAndPolicies': '이용약관 및 정책',
+      'userDropdown.getSearchExtension': 'ChatGPT 검색 확장 프로그램 받기',
+      'userDropdown.logout': '로그아웃',
     }
   };
-  // Simple fallback, assuming 'en' is the default language.
-  // In a real app, you'd get the current language from context or settings.
-  const currentLang = 'en'; // Or 'ko', or dynamically set
+  const currentLang = typeof window !== 'undefined' ? (localStorage.getItem('language') || 'en') : 'en';
   return translations[currentLang]?.[key] || defaultValue || key;
 };
 
 
 export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
+  const userProfileRef = useRef<HTMLDivElement>(null);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const toggleUserProfileDropdown = () => {
+    setIsUserProfileDropdownOpen(!isUserProfileDropdownOpen);
+  };
+
+  const closeUserProfileDropdown = () => {
+    setIsUserProfileDropdownOpen(false);
+  };
+
   // Initialize theme state based on system preference or localStorage
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check if we're in the browser
@@ -83,6 +118,23 @@ export default function HomePage() {
       }
     }
   }, [isDarkMode]);
+
+  // Click outside handler for user profile dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userProfileRef.current && !userProfileRef.current.contains(event.target as Node)) {
+        closeUserProfileDropdown();
+      }
+    };
+
+    if (isUserProfileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isUserProfileDropdownOpen]);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
@@ -128,9 +180,19 @@ export default function HomePage() {
             <Globe size={18} />
           </button>
 
-          {/* User Icon */}
-          <div className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer">
-            <User size={18} />
+          {/* User Icon and Dropdown */}
+          <div className="relative" ref={userProfileRef}>
+            <button 
+              onClick={toggleUserProfileDropdown}
+              className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
+              aria-label="User menu"
+              id="user-menu-button"
+              aria-haspopup="true"
+              aria-expanded={isUserProfileDropdownOpen}
+            >
+              <User size={18} />
+            </button>
+            <UserProfileDropdown isOpen={isUserProfileDropdownOpen} onClose={closeUserProfileDropdown} />
           </div>
         </div>
       </header>
