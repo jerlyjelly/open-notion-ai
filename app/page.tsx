@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import CollapsibleSidebar from "@/components/collapsible-sidebar";
 import UserProfileDropdown from '@/components/user-profile-dropdown'; // Import the new component
+import ModelSelectorDropdown from '@/components/model-selector-dropdown'; // Import the model selector dropdown
 
 // A placeholder for your i18n function
 // You'll need to replace this with your actual i18n implementation
@@ -77,6 +78,9 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const userProfileRef = useRef<HTMLDivElement>(null);
+  const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
+  const [currentModelId, setCurrentModelId] = useState('gpt-4o'); // Default model
+  const modelSelectorRef = useRef<HTMLDivElement>(null);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -88,6 +92,19 @@ export default function HomePage() {
 
   const closeUserProfileDropdown = () => {
     setIsUserProfileDropdownOpen(false);
+  };
+
+  const toggleModelSelectorDropdown = () => {
+    setIsModelSelectorOpen(!isModelSelectorOpen);
+  };
+
+  const closeModelSelectorDropdown = () => {
+    setIsModelSelectorOpen(false);
+  };
+
+  const handleSelectModel = (modelId: string) => {
+    setCurrentModelId(modelId);
+    // Potentially trigger other actions, like fetching new data or updating UI elsewhere
   };
 
   // Initialize theme state based on system preference or localStorage
@@ -136,6 +153,23 @@ export default function HomePage() {
     };
   }, [isUserProfileDropdownOpen]);
 
+  // Click outside handler for model selector dropdown
+  useEffect(() => {
+    const handleClickOutsideModelSelector = (event: MouseEvent) => {
+      if (modelSelectorRef.current && !modelSelectorRef.current.contains(event.target as Node)) {
+        closeModelSelectorDropdown();
+      }
+    };
+
+    if (isModelSelectorOpen) {
+      document.addEventListener('mousedown', handleClickOutsideModelSelector);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideModelSelector);
+    };
+  }, [isModelSelectorOpen]);
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
@@ -147,7 +181,7 @@ export default function HomePage() {
       <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-72' : 'ml-0'}`}>
       {/* Header */}
       <header className="p-3 sm:p-4 flex justify-between items-center"> {/* Removed border-b and border color classes */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 relative" ref={modelSelectorRef}> {/* Added relative and ref */}
           {/* Sidebar Toggle Button - Conditionally rendered */}
           {!isSidebarOpen && (
             <button 
@@ -158,9 +192,30 @@ export default function HomePage() {
               <PanelLeftOpen size={20} />
             </button>
           )}
-          {/* Existing left header items */}
-          <span className="text-sm font-medium">{t('header.chatModelName', 'ChatGPT 4o')}</span>
-          <ChevronDown size={16} className="text-gray-500 cursor-pointer" />
+          {/* Model Selector Button */}
+          <button
+            id="model-selector-button"
+            onClick={toggleModelSelectorDropdown}
+            className="flex items-center space-x-1 px-2 py-1 hover:bg-[var(--gray-100)] rounded-md cursor-pointer" // Adjusted styling
+            aria-haspopup="true"
+            aria-expanded={isModelSelectorOpen}
+          >
+            {/* TODO: Get model display name properly, perhaps from a map or the dropdown component itself */}
+            <span className="text-sm font-medium">
+              {currentModelId === 'gpt-4o' ? 'ChatGPT 4o' : 
+               currentModelId === 'o3' ? 'o3' :
+               currentModelId === 'o4-mini' ? 'o4-mini' :
+               currentModelId === 'o4-mini-high' ? 'o4-mini-high' :
+               'Select Model'}
+            </span>
+            <ChevronDown size={16} className={`text-gray-500 transition-transform duration-200 ${isModelSelectorOpen ? 'rotate-180' : ''}`} />
+          </button>
+          <ModelSelectorDropdown 
+            isOpen={isModelSelectorOpen}
+            onClose={closeModelSelectorDropdown}
+            selectedModelId={currentModelId}
+            onSelectModel={handleSelectModel}
+          />
         </div>
         <div className="flex items-center space-x-3">
           {/* Theme Toggle Button */}
