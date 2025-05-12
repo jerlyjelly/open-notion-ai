@@ -40,9 +40,9 @@ export const metadata: Metadata = {
 
   // Open Graph (Facebook, LinkedIn, Reddit, etc.)
   openGraph: {
-    title: 'OpenNotionAI |  Open source alternative to Notion AI',
-    description: 'Open source alternative to Notion AI. Connect your LLM and chat with your Notion database.',
-    url: 'YOUR_CANONICAL_URL', // Replace with your actual deployed URL
+    title: 'OpenNotionAI | Open source alternative to Notion AI',
+    description: 'Chat with your Notion database for free—anytime, anywhere',
+    url: 'https://open-notion-ai.vercel.app/', // Replace with your actual deployed URL
     siteName: 'OpenNotionAI',
     // Replace with the actual path to your OG image in /public (1200x630 recommended)
     images: [
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'OpenNotionAI | Open source alternative to Notion AI',
-    description: 'Open source alternative to Notion AI. Connect your LLM and chat with your Notion database.',
+    description: 'Chat with your Notion database for free—anytime, anywhere',
     // Replace with the actual path to your Twitter image in /public (same as og:image often works)
     images: ['/opengraph.png'], // Example: replace with your actual image path
     // Optional: Add your Twitter handle
