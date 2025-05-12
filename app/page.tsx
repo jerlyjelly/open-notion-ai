@@ -178,9 +178,9 @@ export default function HomePage() {
     <div className="flex min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
       <CollapsibleSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       {/* Main content wrapper for sidebar transition */}
-      <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-72' : 'ml-0'}`}>
+      <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out h-screen overflow-hidden ${isSidebarOpen ? 'ml-72' : 'ml-0'}`}>
       {/* Header */}
-      <header className="p-3 sm:p-4 flex justify-between items-center"> {/* Removed border-b and border color classes */}
+      <header className="p-3 sm:p-4 flex justify-between items-center flex-shrink-0"> {/* Added flex-shrink-0 */}
         <div className="flex items-center space-x-2 relative" ref={modelSelectorRef}> {/* Added relative and ref */}
           {/* Sidebar Toggle Button - Conditionally rendered */}
           {!isSidebarOpen && (
@@ -253,7 +253,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-col flex-grow items-center justify-center p-4">
+      <main className="flex flex-col flex-grow items-center p-4 justify-center md:justify-center sm:justify-end pb-4"> 
         {/* Input Bar Container */}
         <div className="w-full max-w-xl lg:max-w-2xl bg-[var(--gray-50)]/50 p-3 sm:p-4 rounded-xl shadow-lg border border-[var(--gray-200)]">
           {/* Top part: input field and main action buttons */}
@@ -291,7 +291,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer (optional, for balance) */}
-      <footer className="p-4 text-center text-xs text-[var(--gray-500)]">
+      <footer className="p-4 text-center text-xs text-[var(--gray-500)] flex-shrink-0">
         OpenNotionAI
       </footer>
       </div> {/* Closing main content wrapper */}
