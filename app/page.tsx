@@ -5,7 +5,6 @@ import {
   useEffect
 } from 'react'; // Added hooks for theme toggle
 import {
-  Edit3,
   ChevronDown,
   Sun,
   Moon,
@@ -108,7 +107,6 @@ export default function HomePage() {
             </button>
           )}
           {/* Existing left header items */}
-          <Edit3 size={20} className="text-gray-600" />
           <span className="text-sm font-medium">{t('header.chatModelName', 'ChatGPT 4o')}</span>
           <ChevronDown size={16} className="text-gray-500" />
         </div>
