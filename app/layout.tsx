@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   // Recommended: Define a base URL for resolving relative paths
   // Replace with your actual deployed URL
-  // metadataBase: new URL('YOUR_CANONICAL_URL'), // e.g., https://www.opennotionai.com
+  metadataBase: new URL('https://open-notion-ai.vercel.app/'), // e.g., https://www.opennotionai.com
 
   title: {
     default: 'OpenNotionAI | Open source alternative to Notion AI',
