@@ -5,18 +5,20 @@ import {
   useEffect
 } from 'react'; // Added hooks for theme toggle
 import {
-  ChevronDown,
   Edit3,
+  ChevronDown,
+  Sun,
+  Moon,
+  Globe,
+  User,
   Plus,
+  Send,
   Search,
   Brain,
-  Image as ImageIcon,
-  Send,
-  User,
-  Sun, // Added Sun icon
-  Moon, // Added Moon icon
-  Globe, // Added Globe icon
+  ImageIcon,
+  Menu // Added Menu icon
 } from 'lucide-react';
+import CollapsibleSidebar from "@/components/collapsible-sidebar"; // Adjusted path assuming 'components' is aliased or directly under root for app dir structure. If not, will be '../components/collapsible-sidebar'
 
 // A placeholder for your i18n function
 // You'll need to replace this with your actual i18n implementation
@@ -49,6 +51,11 @@ const t = (key: string, defaultValue?: string) => {
 
 
 export default function HomePage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
   // Initialize theme state based on system preference or localStorage
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check if we're in the browser
@@ -83,10 +90,22 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+    <div className="flex min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+      <CollapsibleSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      {/* Main content wrapper for sidebar transition */}
+      <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-72' : 'ml-0'}`}>
       {/* Header */}
-      <header className="p-3 sm:p-4 flex justify-between items-center">
+      <header className="p-3 sm:p-4 flex justify-between items-center border-b border-[var(--gray-200)]"> {/* Added border-b for consistency if sidebar has it */}
         <div className="flex items-center space-x-2">
+          {/* Sidebar Toggle Button */}
+          <button 
+            onClick={toggleSidebar}
+            className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full"
+            aria-label={t('header.toggleSidebar', 'Toggle sidebar')}
+          >
+            <Menu size={20} />
+          </button>
+          {/* Existing left header items */}
           <Edit3 size={20} className="text-gray-600" />
           <span className="text-sm font-medium">{t('header.chatModelName', 'ChatGPT 4o')}</span>
           <ChevronDown size={16} className="text-gray-500" />
@@ -158,6 +177,7 @@ export default function HomePage() {
       <footer className="p-4 text-center text-xs text-[var(--gray-500)]">
         OpenNotionAI
       </footer>
+      </div> {/* Closing main content wrapper */}
     </div>
   );
 }
