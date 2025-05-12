@@ -27,7 +27,7 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isOpen, toggleS
         <div className="flex items-center justify-start flex-grow">
           <button
             onClick={toggleSidebar}
-            className="rounded-md p-2 text-[var(--gray-600)] hover:bg-[var(--gray-200)]"
+            className="rounded-md p-2 text-[var(--gray-600)] hover:bg-[var(--gray-200)] cursor-pointer"
             aria-label={t('sidebar.collapse', 'Collapse sidebar')}
           >
             <PanelLeftClose size={20} />
@@ -35,7 +35,7 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isOpen, toggleS
         </div>
         <div className="flex items-center justify-end flex-grow">
           <button
-            className="rounded-md p-2 text-[var(--gray-600)] hover:bg-[var(--gray-200)]"
+            className="rounded-md p-2 text-[var(--gray-600)] hover:bg-[var(--gray-200)] cursor-pointer"
             aria-label={t('sidebar.searchHistory', 'Search history')}
           >
             <SearchIcon size={20} />

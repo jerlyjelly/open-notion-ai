@@ -100,7 +100,7 @@ export default function HomePage() {
           {!isSidebarOpen && (
             <button 
               onClick={toggleSidebar}
-              className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full"
+              className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
               aria-label={t('header.toggleSidebar', 'Toggle sidebar')}
             >
               <PanelLeftOpen size={20} />
@@ -108,13 +108,13 @@ export default function HomePage() {
           )}
           {/* Existing left header items */}
           <span className="text-sm font-medium">{t('header.chatModelName', 'ChatGPT 4o')}</span>
-          <ChevronDown size={16} className="text-gray-500" />
+          <ChevronDown size={16} className="text-gray-500 cursor-pointer" />
         </div>
         <div className="flex items-center space-x-3">
           {/* Theme Toggle Button */}
           <button 
             onClick={toggleTheme}
-            className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full"
+            className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
             aria-label={isDarkMode ? "Switch to light theme" : "Switch to dark theme"}
           >
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -122,14 +122,14 @@ export default function HomePage() {
 
           {/* Globe Icon Button */}
           <button 
-            className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full"
+            className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
             aria-label="Select language"
           >
             <Globe size={18} />
           </button>
 
           {/* User Icon */}
-          <div className="w-8 h-8 rounded-full bg-[var(--gray-200)] flex items-center justify-center text-[var(--gray-600)] hover:bg-[var(--gray-300)] cursor-pointer">
+          <div className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer">
             <User size={18} />
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function HomePage() {
         <div className="w-full max-w-xl lg:max-w-2xl bg-[var(--gray-50)]/50 p-3 sm:p-4 rounded-xl shadow-lg border border-[var(--gray-200)]">
           {/* Top part: input field and main action buttons */}
           <div className="flex items-center space-x-2">
-            <button className="p-2 text-[var(--gray-500)] hover:bg-[var(--gray-200)] rounded-full">
+            <button className="p-2 text-[var(--gray-500)] hover:bg-[var(--gray-200)] rounded-full cursor-pointer">
               <Plus size={22} />
             </button>
             <input
@@ -149,7 +149,7 @@ export default function HomePage() {
               placeholder={t('home.askAnythingPlaceholder', 'Ask anything')}
               className="flex-grow bg-transparent focus:outline-none p-2 text-base placeholder-[var(--gray-500)]"
             />
-            <button className="p-2.5 bg-black text-white rounded-full hover:bg-gray-800">
+            <button className="p-2.5 bg-black text-white rounded-full hover:bg-gray-800 cursor-pointer">
               <Send size={18} />
             </button>
           </div>
@@ -163,7 +163,7 @@ export default function HomePage() {
             ].map((action, index) => (
               <button
                 key={index}
-                className="flex-shrink-0 flex items-center space-x-1.5 px-3 py-1.5 bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-lg text-xs font-medium text-[var(--gray-700)]"
+                className="flex-shrink-0 flex items-center space-x-1.5 px-3 py-1.5 bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-lg text-xs font-medium text-[var(--gray-700)] cursor-pointer"
               >
                 {action.icon}
                 <span>{t(action.textKey, action.defaultText)}</span>
