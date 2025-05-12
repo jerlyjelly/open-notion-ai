@@ -9,8 +9,8 @@ import {
   ChevronDown,
   Sun,
   Moon,
-  Globe,
   User,
+  Github, // Added Github icon
   Plus,
   Send,
   Search,
@@ -35,6 +35,7 @@ const t = (key: string, defaultValue?: string) => {
       "home.deepResearchAction": "Deep research",
       "home.createImageAction": "Create image",
       "header.toggleSidebar": "Toggle sidebar",
+      "header.viewOnGitHub": "View on GitHub",
       // Add new keys for UserProfileDropdown if they are not already in its own t function
       'userDropdown.upgradePlan': 'Upgrade Plan',
       'userDropdown.tasks': 'Tasks',
@@ -56,6 +57,7 @@ const t = (key: string, defaultValue?: string) => {
       "home.deepResearchAction": "심층 연구",
       "home.createImageAction": "이미지 생성",
       "header.toggleSidebar": "사이드바 토글",
+      "header.viewOnGitHub": "GitHub에서 보기",
       'userDropdown.upgradePlan': '플랜 업그레이드',
       'userDropdown.tasks': '작업',
       'userDropdown.myGpts': '내 GPTs',
@@ -227,13 +229,16 @@ export default function HomePage() {
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          {/* Globe Icon Button */}
-          <button 
+          {/* GitHub Icon Button */}
+          <a 
+            href="https://github.com/jerlyjelly/open-notion-ai"
+            target="_blank"
+            rel="noopener noreferrer"
             className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
-            aria-label="Select language"
+            aria-label={t('header.viewOnGitHub', 'View on GitHub')}
           >
-            <Globe size={18} />
-          </button>
+            <Github size={18} />
+          </a>
 
           {/* User Icon and Dropdown */}
           <div className="relative" ref={userProfileRef}>
