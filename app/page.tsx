@@ -16,7 +16,7 @@ import {
   Search,
   Brain,
   ImageIcon,
-  Menu // Added Menu icon
+  PanelLeftOpen // Added Menu icon
 } from 'lucide-react';
 import CollapsibleSidebar from "@/components/collapsible-sidebar"; // Adjusted path assuming 'components' is aliased or directly under root for app dir structure. If not, will be '../components/collapsible-sidebar'
 
@@ -95,16 +95,18 @@ export default function HomePage() {
       {/* Main content wrapper for sidebar transition */}
       <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out ${isSidebarOpen ? 'ml-72' : 'ml-0'}`}>
       {/* Header */}
-      <header className="p-3 sm:p-4 flex justify-between items-center border-b border-[var(--gray-200)]"> {/* Added border-b for consistency if sidebar has it */}
+      <header className="p-3 sm:p-4 flex justify-between items-center"> {/* Removed border-b and border color classes */}
         <div className="flex items-center space-x-2">
-          {/* Sidebar Toggle Button */}
-          <button 
-            onClick={toggleSidebar}
-            className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full"
-            aria-label={t('header.toggleSidebar', 'Toggle sidebar')}
-          >
-            <Menu size={20} />
-          </button>
+          {/* Sidebar Toggle Button - Conditionally rendered */}
+          {!isSidebarOpen && (
+            <button 
+              onClick={toggleSidebar}
+              className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full"
+              aria-label={t('header.toggleSidebar', 'Toggle sidebar')}
+            >
+              <PanelLeftOpen size={20} />
+            </button>
+          )}
           {/* Existing left header items */}
           <Edit3 size={20} className="text-gray-600" />
           <span className="text-sm font-medium">{t('header.chatModelName', 'ChatGPT 4o')}</span>
