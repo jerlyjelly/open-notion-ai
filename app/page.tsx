@@ -22,60 +22,6 @@ import CollapsibleSidebar from "@/components/collapsible-sidebar";
 import UserProfileDropdown from '@/components/user-profile-dropdown'; // Import the new component
 import ModelSelectorDropdown from '@/components/model-selector-dropdown'; // Import the model selector dropdown
 
-// A placeholder for your i18n function
-// You'll need to replace this with your actual i18n implementation
-// For example, using 'next-international' or 'react-i18next'
-const t = (key: string, defaultValue?: string) => {
-  const translations: Record<string, Record<string, string>> = {
-    en: {
-      "header.chatModelName": "ChatGPT 4o",
-      "avatar.plus": "PLUS",
-      "home.askAnythingPlaceholder": "Ask anything",
-      "home.searchAction": "Search",
-      "home.deepResearchAction": "Deep research",
-      "home.createImageAction": "Create image",
-      "header.toggleSidebar": "Toggle sidebar",
-      "header.viewOnGitHub": "View on GitHub",
-      // Add new keys for UserProfileDropdown if they are not already in its own t function
-      'userDropdown.upgradePlan': 'Upgrade Plan',
-      'userDropdown.tasks': 'Tasks',
-      'userDropdown.myGpts': 'My GPTs',
-      'userDropdown.customizeChatGPT': 'Customize ChatGPT',
-      'userDropdown.settings': 'Settings',
-      'userDropdown.keyboardShortcuts': 'Keyboard shortcuts',
-      'userDropdown.helpAndFaq': 'Help & FAQ',
-      'userDropdown.releaseNotes': 'Release notes',
-      'userDropdown.termsAndPolicies': 'Terms & policies',
-      'userDropdown.getSearchExtension': 'Get ChatGPT search extension',
-      'userDropdown.logout': 'Log out',
-    },
-    ko: {
-      "header.chatModelName": "ChatGPT 4o",
-      "avatar.plus": "플러스",
-      "home.askAnythingPlaceholder": "무엇이든 물어보세요",
-      "home.searchAction": "검색",
-      "home.deepResearchAction": "심층 연구",
-      "home.createImageAction": "이미지 생성",
-      "header.toggleSidebar": "사이드바 토글",
-      "header.viewOnGitHub": "GitHub에서 보기",
-      'userDropdown.upgradePlan': '플랜 업그레이드',
-      'userDropdown.tasks': '작업',
-      'userDropdown.myGpts': '내 GPTs',
-      'userDropdown.customizeChatGPT': 'ChatGPT 맞춤설정',
-      'userDropdown.settings': '설정',
-      'userDropdown.keyboardShortcuts': '키보드 단축키',
-      'userDropdown.helpAndFaq': '도움말 및 FAQ',
-      'userDropdown.releaseNotes': '릴리스 노트',
-      'userDropdown.termsAndPolicies': '이용약관 및 정책',
-      'userDropdown.getSearchExtension': 'ChatGPT 검색 확장 프로그램 받기',
-      'userDropdown.logout': '로그아웃',
-    }
-  };
-  const currentLang = typeof window !== 'undefined' ? (localStorage.getItem('language') || 'en') : 'en';
-  return translations[currentLang]?.[key] || defaultValue || key;
-};
-
-
 export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
@@ -189,7 +135,7 @@ export default function HomePage() {
             <button 
               onClick={toggleSidebar}
               className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
-              aria-label={t('header.toggleSidebar', 'Toggle sidebar')}
+              aria-label="Toggle sidebar"
             >
               <PanelLeftOpen size={20} />
             </button>
@@ -235,7 +181,7 @@ export default function HomePage() {
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
-            aria-label={t('header.viewOnGitHub', 'View on GitHub')}
+            aria-label="View on GitHub"
           >
             <Github size={18} />
           </a>
@@ -268,7 +214,7 @@ export default function HomePage() {
             </button>
             <input
               type="text"
-              placeholder={t('home.askAnythingPlaceholder', 'Ask anything')}
+              placeholder="Ask anything"
               className="flex-grow bg-transparent focus:outline-none p-2 text-base placeholder-[var(--gray-500)]"
             />
             <button className="p-2.5 bg-black text-white rounded-full hover:bg-gray-800 cursor-pointer">
@@ -288,7 +234,7 @@ export default function HomePage() {
                 className="flex-shrink-0 flex items-center space-x-1.5 px-3 py-1.5 bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-lg text-xs font-medium text-[var(--gray-700)] cursor-pointer"
               >
                 {action.icon}
-                <span>{t(action.textKey, action.defaultText)}</span>
+                <span>{action.defaultText}</span>
               </button>
             ))}
           </div>

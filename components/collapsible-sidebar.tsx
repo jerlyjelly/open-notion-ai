@@ -7,8 +7,7 @@ import {
   PlusCircle,
 } from 'lucide-react';
 
-// A placeholder t function for i18n, replace with your actual i18n solution
-const t = (key: string, defaultText: string) => defaultText;
+
 
 interface CollapsibleSidebarProps {
   isOpen: boolean;
@@ -28,7 +27,7 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isOpen, toggleS
           <button
             onClick={toggleSidebar}
             className="rounded-md p-2 text-[var(--gray-600)] hover:bg-[var(--gray-200)] cursor-pointer"
-            aria-label={t('sidebar.collapse', 'Collapse sidebar')}
+            aria-label="Collapse sidebar"
           >
             <PanelLeftClose size={20} />
           </button>
@@ -36,7 +35,7 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isOpen, toggleS
         <div className="flex items-center justify-end flex-grow">
           <button
             className="rounded-md p-2 text-[var(--gray-600)] hover:bg-[var(--gray-200)] cursor-pointer"
-            aria-label={t('sidebar.searchHistory', 'Search history')}
+            aria-label="Search history"
           >
             <SearchIcon size={20} />
           </button>
@@ -48,13 +47,13 @@ const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isOpen, toggleS
         {/* Unified Chat List */}
         <ul className="space-y-1 text-sm text-[var(--gray-700)]">
           <li className="cursor-pointer rounded-md p-2 hover:bg-[var(--gray-200)]">
-            {t('sidebar.chatItemPlaceholder1', 'Chat about Next.js features')}
+            "Chat about Next.js features"
           </li>
           <li className="cursor-pointer rounded-md p-2 hover:bg-[var(--gray-200)]">
-            {t('sidebar.chatItemPlaceholder2', 'Tailwind CSS tips')}
+            "Tailwind CSS tips"
           </li>
           <li className="cursor-pointer rounded-md p-2 hover:bg-[var(--gray-200)]">
-            {t('sidebar.chatItemPlaceholder3', 'Supabase RLS discussion')}
+            "Supabase RLS discussion"
           </li>
         </ul>
       </div>

@@ -8,9 +8,4 @@ alwaysApply: true
      - Ensure all code, including backend logic like Supabase Edge Functions, is included in the repository for easy self-hosting.
      - Provide a `.env.sample` file detailing all required environment variables.
      - Maintain a comprehensive `README.md` with clear setup, deployment, and contribution guidelines.
- 2.  **Internationalization (i18n)**:
-     - All user-facing strings in the UI **MUST** be internationalized.
-     - Initial languages are English (en) and Korean (ko).
-     - Localization files (e.g., JSON or dedicated i18n modules) must accurately and equally reflect all UI strings for both languages. Ensure meticulous translation and key management.
-
-     - When adding or modifying UI text, always update both English and Korean localization files simultaneously.
+     - It is important that you consider all backend functions to be deployed to be able to be replicated by other users when hosting themselves.
