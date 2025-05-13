@@ -25,6 +25,8 @@ interface ModelSelectorDropdownProps {
   onSelectModel: (modelId: string) => void;
   selectedModelName: string;
   onSelectModelName: (modelName: string) => void;
+  selectedProviderId: string;
+  onSelectProvider: (providerId: string) => void;
   // TODO: Add actual model data source prop later
 }
 
@@ -53,6 +55,8 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   onSelectModel,
   selectedModelName,
   onSelectModelName,
+  selectedProviderId,
+  onSelectProvider,
 }) => {
   if (!isOpen) {
     return null;
@@ -63,11 +67,14 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   const [openRouterModelName, setOpenRouterModelName] = useState('');
 
   useEffect(() => {
-    if (selectedProvider === 'openrouter' && selectedModelId) {
-      setOpenRouterModelName(selectedModelId);
+    if (isOpen) {
+      setSelectedProvider(selectedProviderId || 'hosted');
+      if (selectedProviderId === 'openrouter') {
+        setOpenRouterModelName(selectedModelId || '');
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, selectedProviderId, selectedModelId]);
 
   const providers: Provider[] = [
     {
@@ -161,18 +168,29 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
 
   const selectProviderAction = (providerId: string) => {
     setSelectedProvider(providerId);
-    setIsProviderDropdownOpen(false);
+    onSelectProvider(providerId);
 
     if (providerId === 'hosted') {
       onSelectModel('');
-      onSelectModelName('');
+      onSelectModelName('Hosted');
     } else if (providerId === 'openrouter') {
       onSelectModel(openRouterModelName);
       onSelectModelName(openRouterModelName);
     } else {
-      onSelectModel('');
-      onSelectModelName('');
+      let defaultModel: Model | undefined;
+      if (providerId === 'chatgpt' && CHATGPT_MODELS.length > 0) defaultModel = CHATGPT_MODELS[0];
+      else if (providerId === 'gemini' && GEMINI_MODELS.length > 0) defaultModel = GEMINI_MODELS[0];
+      else if (providerId === 'claude' && CLAUDE_MODELS.length > 0) defaultModel = CLAUDE_MODELS[0];
+
+      if (defaultModel) {
+        onSelectModel(defaultModel.id);
+        onSelectModelName(defaultModel.name);
+      } else {
+        onSelectModel('');
+        onSelectModelName(providers.find(p => p.id === providerId)?.name || providerId);
+      }
     }
+    setIsProviderDropdownOpen(false);
   };
 
   const currentProviderDetails = providers.find(p => p.id === selectedProvider) || providers[0];

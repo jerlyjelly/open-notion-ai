@@ -33,8 +33,38 @@ import ConfirmSaveSecretModal from '@/components/confirm-save-secret-modal'; // 
 import { useAuth } from '@/components/auth/auth-provider';
 import { supabase } from '@/lib/supabase/client';
 import { encryptSecret, decryptSecret } from '@/lib/crypto-utils'; // Import crypto utils
+import Image from 'next/image'; // Import Next Image
 
 const LOCAL_STORAGE_NOTION_SECRET_KEY = 'notion_integration_secret';
+
+// Define provider data for logos and names, can be moved to a shared file later
+const PAGE_PROVIDERS = [
+  { 
+    id: 'hosted', 
+    name: 'Hosted', 
+    logo: <Image src="/provider-logos/hosted-light.svg" alt="Hosted" width={16} height={16} className="text-[var(--muted-foreground)]" /> 
+  },
+  { 
+    id: 'chatgpt', 
+    name: 'ChatGPT', 
+    logo: <Image src="/provider-logos/chatgpt-logo.svg" alt="ChatGPT" width={16} height={16} className="text-[var(--muted-foreground)]" /> 
+  },
+  { 
+    id: 'gemini', 
+    name: 'Gemini', 
+    logo: <Image src="/provider-logos/gemini-logo.svg" alt="Gemini" width={16} height={16} className="text-[var(--muted-foreground)]" /> 
+  },
+  { 
+    id: 'claude', 
+    name: 'Claude', 
+    logo: <Image src="/provider-logos/claude-logo.svg" alt="Claude" width={16} height={16} className="text-[var(--muted-foreground)]" /> 
+  },
+  { 
+    id: 'openrouter', 
+    name: 'OpenRouter', 
+    logo: <Image src="/provider-logos/openrouter-logo.svg" alt="OpenRouter" width={16} height={16} className="text-[var(--muted-foreground)]" /> 
+  },
+];
 
 export default function HomePage() {
   const { session, user, isLoading: isAuthLoading } = useAuth();
@@ -42,8 +72,9 @@ export default function HomePage() {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const userProfileRef = useRef<HTMLDivElement>(null);
   const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
-  const [currentModelId, setCurrentModelId] = useState(''); // Default to empty for Hosted
-  const [currentModelName, setCurrentModelName] = useState('Hosted'); // Default name to Hosted
+  const [currentProviderId, setCurrentProviderId] = useState('hosted'); // New state for provider
+  const [currentModelId, setCurrentModelId] = useState(''); 
+  const [currentModelName, setCurrentModelName] = useState('Hosted'); 
   const modelSelectorRef = useRef<HTMLDivElement>(null);
 
   // Notion State
@@ -234,6 +265,7 @@ export default function HomePage() {
   const closeModelSelectorDropdown = () => setIsModelSelectorOpen(false);
   const handleSelectModel = (modelId: string) => setCurrentModelId(modelId);
   const handleSelectModelName = (modelName: string) => setCurrentModelName(modelName);
+  const handleSelectProvider = (providerId: string) => setCurrentProviderId(providerId); // New handler
   const openAuthModal = () => setIsAuthModalOpen(true);
   const closeAuthModal = () => setIsAuthModalOpen(false);
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
@@ -274,14 +306,21 @@ export default function HomePage() {
               aria-haspopup="true"
               aria-expanded={isModelSelectorOpen}
             >
-              <span className="text-sm font-medium">
-                {currentModelId === '' ? 'Hosted' : currentModelName || currentModelId}
+              {PAGE_PROVIDERS.find(p => p.id === currentProviderId)?.logo || <Cloud size={16} />} 
+              <span className="text-sm font-medium ml-2">
+                {currentProviderId === 'hosted' 
+                  ? 'Hosted' 
+                  : currentProviderId === 'openrouter' 
+                    ? currentModelName || 'OpenRouter' // Show model name or "OpenRouter" for OpenRouter
+                    : currentModelName || currentModelId}
               </span>
               <ChevronDown size={16} className={`text-gray-500 transition-transform duration-200 ${isModelSelectorOpen ? 'rotate-180' : ''}`} />
             </button>
             <ModelSelectorDropdown 
               isOpen={isModelSelectorOpen} 
               onClose={closeModelSelectorDropdown} 
+              selectedProviderId={currentProviderId}
+              onSelectProvider={handleSelectProvider}
               selectedModelId={currentModelId} 
               onSelectModel={handleSelectModel} 
               selectedModelName={currentModelName} 
