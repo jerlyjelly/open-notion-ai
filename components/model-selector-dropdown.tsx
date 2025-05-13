@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Check, Info, ChevronRight, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, Info, ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 
 interface Provider {
@@ -16,8 +16,6 @@ interface Model {
   name: string;
   descriptionKey: string;
   defaultDescription: string;
-  selected: boolean;
-  disabled: boolean;
 }
 
 interface ModelSelectorDropdownProps {
@@ -27,6 +25,24 @@ interface ModelSelectorDropdownProps {
   onSelectModel: (modelId: string) => void;
   // TODO: Add actual model data source prop later
 }
+
+const CHATGPT_MODELS: Model[] = [
+  { id: 'gpt-4o', name: 'GPT-4o', descriptionKey: 'modelSelector.gpt4oDesc', defaultDescription: 'Great for most tasks' },
+  { id: 'o3', name: 'o3', descriptionKey: 'modelSelector.o3Desc', defaultDescription: 'Uses advanced reasoning' },
+  { id: 'o4-mini', name: 'o4-mini', descriptionKey: 'modelSelector.o4MiniDesc', defaultDescription: 'Fastest at advanced reasoning' },
+];
+
+const GEMINI_MODELS: Model[] = [
+  { id: 'gemini-2.5-pro', name: '2.5 Pro', descriptionKey: 'modelSelector.gemini25ProDesc', defaultDescription: 'Most capable model' },
+  { id: 'gemini-2.5-flash', name: '2.5 Flash', descriptionKey: 'modelSelector.gemini25FlashDesc', defaultDescription: 'Fast and efficient' },
+  { id: 'gemini-2.0-flash', name: '2.0 Flash', descriptionKey: 'modelSelector.gemini20FlashDesc', defaultDescription: 'Legacy fast model' },
+];
+
+const CLAUDE_MODELS: Model[] = [
+  { id: 'claude-3.7-sonnet', name: '3.7 Sonnet', descriptionKey: 'modelSelector.claude37SonnetDesc', defaultDescription: 'Latest Sonnet model' },
+  { id: 'claude-3.5-sonnet', name: '3.5 Sonnet', descriptionKey: 'modelSelector.claude35SonnetDesc', defaultDescription: 'Balanced performance' },
+  { id: 'claude-3.5-haiku', name: '3.5 Haiku', descriptionKey: 'modelSelector.claude35HaikuDesc', defaultDescription: 'Fast and compact' },
+];
 
 const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   isOpen,
@@ -38,15 +54,21 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
     return null;
   }
 
-  // State for selected provider
   const [selectedProvider, setSelectedProvider] = useState('hosted');
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
+  const [openRouterModelName, setOpenRouterModelName] = useState('');
 
-  // Provider data with SVG logos
+  useEffect(() => {
+    if (selectedProvider === 'openrouter' && selectedModelId) {
+      setOpenRouterModelName(selectedModelId);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   const providers: Provider[] = [
-    { 
-      id: 'hosted', 
-      name: 'Hosted', 
+    {
+      id: 'hosted',
+      name: 'Hosted',
       logo: (
         <Image
           src="/provider-logos/hosted-light.svg"
@@ -58,9 +80,9 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       ),
       selected: selectedProvider === 'hosted'
     },
-    { 
-      id: 'chatgpt', 
-      name: 'ChatGPT', 
+    {
+      id: 'chatgpt',
+      name: 'ChatGPT',
       logo: (
         <Image
           src="/provider-logos/chatgpt-logo.svg"
@@ -72,9 +94,9 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       ),
       selected: selectedProvider === 'chatgpt'
     },
-    { 
-      id: 'gemini', 
-      name: 'Gemini', 
+    {
+      id: 'gemini',
+      name: 'Gemini',
       logo: (
         <Image
           src="/provider-logos/gemini-logo.svg"
@@ -86,9 +108,9 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       ),
       selected: selectedProvider === 'gemini'
     },
-    { 
-      id: 'claude', 
-      name: 'Claude', 
+    {
+      id: 'claude',
+      name: 'Claude',
       logo: (
         <Image
           src="/provider-logos/claude-logo.svg"
@@ -100,9 +122,9 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       ),
       selected: selectedProvider === 'claude'
     },
-    { 
-      id: 'openrouter', 
-      name: 'OpenRouter', 
+    {
+      id: 'openrouter',
+      name: 'OpenRouter',
       logo: (
         <Image
           src="/provider-logos/openrouter-logo.svg"
@@ -116,45 +138,58 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
     },
   ];
 
-  // Placeholder data based on screenshot
-  const models: Model[] = [
-    { id: 'gpt-4o', name: 'GPT-4o', descriptionKey: 'modelSelector.gpt4oDesc', defaultDescription: 'Great for most tasks', selected: selectedModelId === 'gpt-4o', disabled: false },
-    { id: 'o3', name: 'o3', descriptionKey: 'modelSelector.o3Desc', defaultDescription: 'Uses advanced reasoning', selected: selectedModelId === 'o3', disabled: true },
-    { id: 'o4-mini', name: 'o4-mini', descriptionKey: 'modelSelector.o4MiniDesc', defaultDescription: 'Fastest at advanced reasoning', selected: selectedModelId === 'o4-mini', disabled: false },
-    { id: 'o4-mini-high', name: 'o4-mini-high', descriptionKey: 'modelSelector.o4MiniHighDesc', defaultDescription: 'Great at coding and visual reasoning', selected: selectedModelId === 'o4-mini-high', disabled: false },
-  ];
-
-  const handleSelect = (modelId: string) => {
+  const handleSelectModelFromList = (modelId: string) => {
     onSelectModel(modelId);
     onClose();
+  };
+
+  const handleOpenRouterModelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newModelName = e.target.value;
+    setOpenRouterModelName(newModelName);
+    onSelectModel(newModelName);
   };
 
   const toggleProviderDropdown = () => {
     setIsProviderDropdownOpen(!isProviderDropdownOpen);
   };
 
-  const selectProvider = (providerId: string) => {
+  const selectProviderAction = (providerId: string) => {
     setSelectedProvider(providerId);
     setIsProviderDropdownOpen(false);
+
+    if (providerId === 'hosted') {
+      onSelectModel('');
+    } else if (providerId === 'openrouter') {
+      onSelectModel(openRouterModelName);
+    } else {
+      onSelectModel('');
+    }
   };
 
-  // Find the currently selected provider
-  const currentProvider = providers.find(p => p.id === selectedProvider) || providers[0];
+  const currentProviderDetails = providers.find(p => p.id === selectedProvider) || providers[0];
+
+  let currentModelsToDisplay: Model[] = [];
+  if (selectedProvider === 'chatgpt') {
+    currentModelsToDisplay = CHATGPT_MODELS;
+  } else if (selectedProvider === 'gemini') {
+    currentModelsToDisplay = GEMINI_MODELS;
+  } else if (selectedProvider === 'claude') {
+    currentModelsToDisplay = CLAUDE_MODELS;
+  }
 
   return (
     <div
       className="absolute top-12 left-0 mt-1 w-72 bg-[var(--background)] text-[var(--foreground)] rounded-md shadow-xl z-50 border border-[var(--gray-200)]"
       role="menu"
       aria-orientation="vertical"
-      aria-labelledby="model-selector-button" // Ensure the button triggering this has this id
+      aria-labelledby="model-selector-button"
     >
       {/* Header */}
       <div className="px-4 py-2 flex justify-between items-center border-[var(--gray-200)]">
         <span className="text-xs font-medium text-[var(--muted-foreground)] tracking-wider">
           Model
         </span>
-        <button className="text-[var(--muted-foreground)] hover:text-[var(--popover-foreground)]">
-           {/* Tooltip needed for the Info icon */}
+        <button className="text-[var(--muted-foreground)] hover:text-[var(--popover-foreground)]" title="Model Information">
           <Info size={16} />
         </button>
       </div>
@@ -162,24 +197,23 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       {/* Provider Selector */}
       <div className="px-4 py-2 border-b border-[var(--gray-200)]">
         <div className="relative">
-          <button 
+          <button
             onClick={toggleProviderDropdown}
             className="flex items-center justify-between w-full px-3 py-2 text-sm bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-md"
           >
             <div className="flex items-center space-x-2">
-              <span className="text-[var(--muted-foreground)]">{currentProvider.logo}</span>
-              <span>{currentProvider.name}</span>
+              <span className="text-[var(--muted-foreground)]">{currentProviderDetails.logo}</span>
+              <span>{currentProviderDetails.name}</span>
             </div>
             <ChevronDown size={16} className={`text-[var(--muted-foreground)] transition-transform duration-200 ${isProviderDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Provider Dropdown */}
           {isProviderDropdownOpen && (
             <div className="absolute top-full left-0 mt-1 w-full bg-[var(--background)] rounded-md shadow-lg border border-[var(--gray-200)] z-10">
               {providers.map((provider) => (
                 <button
                   key={provider.id}
-                  onClick={() => selectProvider(provider.id)}
+                  onClick={() => selectProviderAction(provider.id)}
                   className={`flex items-center space-x-2 w-full px-3 py-2 text-sm text-left hover:bg-[var(--accent-background)] ${provider.selected ? 'bg-[var(--accent-background)] text-[var(--accent-foreground)]' : ''}`}
                 >
                   <span className={`text-[var(--muted-foreground)] ${provider.selected ? 'text-[var(--accent-foreground)]' : ''}`}>{provider.logo}</span>
@@ -192,57 +226,86 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
         </div>
       </div>
 
-      {/* Model List */}
-      <div className="py-1">
-        {models.map((model) => (
-          <button
-            key={model.id}
-            onClick={() => !model.disabled && handleSelect(model.id)}
-            className={`flex items-center justify-between w-full px-4 py-2 text-sm text-left ${
-              model.disabled
-                ? 'text-[var(--muted-foreground)] opacity-50 cursor-not-allowed'
-                : 'hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)]'
-            } ${model.selected ? 'bg-[var(--accent-background)] text-[var(--accent-foreground)]' : 'text-[var(--popover-foreground)]'}`}
-            role="menuitemradio"
-            aria-checked={model.selected}
-            disabled={model.disabled}
-          >
-            <div>
-              <div className={`font-medium ${model.disabled ? 'text-[var(--muted-foreground)] opacity-50' : 'text-[var(--popover-foreground)]'} ${model.selected ? 'text-[var(--accent-foreground)]' : ''}`}>
-                {model.name}
+      {/* Conditional Sections: Model List / OpenRouter Input / API Key */}
+      {selectedProvider !== 'hosted' && (
+        <>
+          {/* Model List or OpenRouter Input */}
+          <div className="py-1 max-h-60 overflow-y-auto">
+            {selectedProvider === 'openrouter' ? (
+              <div className="px-4 py-2">
+                <label
+                  htmlFor="openRouterModelInput"
+                  className="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5"
+                >
+                  Model Name (e.g., openai/gpt-4o)
+                </label>
+                <input
+                  type="text"
+                  id="openRouterModelInput"
+                  name="openRouterModelInput"
+                  placeholder="Enter full model name"
+                  className="w-full px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--gray-200)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-foreground)] focus:border-[var(--accent-foreground)] placeholder:text-[var(--muted-foreground)]"
+                  value={openRouterModelName}
+                  onChange={handleOpenRouterModelChange}
+                  autoComplete="off"
+                />
+                <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
+                  Specify the exact model identifier from OpenRouter.
+                </p>
               </div>
-              <div className={`text-xs ${model.disabled ? 'text-[var(--muted-foreground)] opacity-50' : 'text-[var(--muted-foreground)]'} ${model.selected ? 'text-[var(--accent-foreground)] opacity-80' : ''}`}>
-                {model.defaultDescription}
-              </div>
-            </div>
-            {model.selected && !model.disabled && (
-              <Check size={16} className="text-[var(--accent-foreground)]" />
+            ) : (
+              currentModelsToDisplay.map((model) => {
+                const isSelected = model.id === selectedModelId;
+                return (
+                  <button
+                    key={model.id}
+                    onClick={() => handleSelectModelFromList(model.id)}
+                    className={`flex items-center justify-between w-full px-4 py-2 text-sm text-left 
+                      hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)]
+                    ${isSelected ? 'bg-[var(--accent-background)] text-[var(--accent-foreground)]' : 'text-[var(--popover-foreground)]'}`}
+                    role="menuitemradio"
+                    aria-checked={isSelected}
+                  >
+                    <div>
+                      <div className={`font-medium ${isSelected ? 'text-[var(--accent-foreground)]' : 'text-[var(--popover-foreground)]'}`}>
+                        {model.name}
+                      </div>
+                      <div className={`text-xs ${isSelected ? 'text-[var(--accent-foreground)] opacity-80' : 'text-[var(--muted-foreground)]'}`}>
+                        {model.defaultDescription}
+                      </div>
+                    </div>
+                    {isSelected && (
+                      <Check size={16} className="text-[var(--accent-foreground)]" />
+                    )}
+                  </button>
+                );
+              })
             )}
-          </button>
-        ))}
-      </div>
+          </div>
 
-      {/* API Key Input Section */}
-      <div className="px-4 py-2 border-t border-[var(--gray-200)]">
-        <label 
-          htmlFor="apiKeyInput" 
-          className="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5"
-        >
-          API Key
-        </label>
-        <input
-          type="password"
-          id="apiKeyInput"
-          name="apiKeyInput"
-          placeholder="Enter API key"
-          className="w-full px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--gray-200)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-foreground)] focus:border-[var(--accent-foreground)] placeholder:text-[var(--muted-foreground)]"
-          autoComplete="off"
-        />
-        <p className="mt-2 text-xs text-[var(--muted-foreground)]">
-          <Info size={12} className="inline mr-1 relative -top-px" />
-          Your API key is not stored and is only used for the current session.
-        </p>
-      </div>
+          {/* API Key Input Section */}
+          <div className="px-4 py-2 border-t border-[var(--gray-200)]">
+            <label
+              htmlFor="apiKeyInput"
+              className="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5"
+            >
+              API Key {selectedProvider !== 'hosted' && `(${currentProviderDetails.name})`}
+            </label>
+            <input
+              type="password"
+              id="apiKeyInput"
+              name="apiKeyInput"
+              placeholder="Enter API key"
+              className="w-full px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--gray-200)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-foreground)] focus:border-[var(--accent-foreground)] placeholder:text-[var(--muted-foreground)]"
+              autoComplete="off"
+            />
+            <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+              <Info size={12} className="inline mr-1 relative -top-px" />
+              Your API key is not stored and is only used for the current session.
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 };
