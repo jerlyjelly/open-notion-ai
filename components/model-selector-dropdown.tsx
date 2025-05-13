@@ -216,9 +216,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
         <span className="text-xs font-medium text-[var(--muted-foreground)] tracking-wider">
           Model
         </span>
-        <button className="text-[var(--muted-foreground)] hover:text-[var(--popover-foreground)]" title="Model Information">
-          <Info size={16} />
-        </button>
+        
       </div>
 
       {/* Provider Selector */}
@@ -252,6 +250,16 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
           )}
         </div>
       </div>
+
+      {/* Hosted Provider Information */}
+      {selectedProvider === 'hosted' && (
+        <div className="px-4 py-3">
+          <p className="text-xs text-[var(--muted-foreground)]">
+            <Info size={12} className="inline mr-1 relative -top-px" />
+            Free but limited AI. Enjoy!
+          </p>
+        </div>
+      )}
 
       {/* Conditional Sections: Model List / OpenRouter Input / API Key */}
       {selectedProvider !== 'hosted' && (
