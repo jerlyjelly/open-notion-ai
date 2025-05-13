@@ -1,10 +1,15 @@
 'use client';
 
-import React from 'react';
-import { Check, Info, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, Info, ChevronRight, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 
-
-
+interface Provider {
+  id: string;
+  name: string;
+  logo: React.ReactNode;
+  selected: boolean;
+}
 
 interface Model {
   id: string;
@@ -33,6 +38,70 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
     return null;
   }
 
+  // State for selected provider
+  const [selectedProvider, setSelectedProvider] = useState('chatgpt');
+  const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
+
+  // Provider data with SVG logos
+  const providers: Provider[] = [
+    { 
+      id: 'chatgpt', 
+      name: 'ChatGPT', 
+      logo: (
+        <Image
+          src="/provider-logos/chatgpt-logo.svg"
+          alt="ChatGPT Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      selected: selectedProvider === 'chatgpt'
+    },
+    { 
+      id: 'gemini', 
+      name: 'Gemini', 
+      logo: (
+        <Image
+          src="/provider-logos/gemini-logo.svg"
+          alt="Gemini Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      selected: selectedProvider === 'gemini'
+    },
+    { 
+      id: 'claude', 
+      name: 'Claude', 
+      logo: (
+        <Image
+          src="/provider-logos/claude-logo.svg"
+          alt="Claude Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      selected: selectedProvider === 'claude'
+    },
+    { 
+      id: 'openrouter', 
+      name: 'OpenRouter', 
+      logo: (
+        <Image
+          src="/provider-logos/openrouter-logo.svg"
+          alt="OpenRouter Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      selected: selectedProvider === 'openrouter'
+    },
+  ];
+
   // Placeholder data based on screenshot
   const models: Model[] = [
     { id: 'gpt-4o', name: 'GPT-4o', descriptionKey: 'modelSelector.gpt4oDesc', defaultDescription: 'Great for most tasks', selected: selectedModelId === 'gpt-4o', disabled: false },
@@ -46,6 +115,18 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
     onClose();
   };
 
+  const toggleProviderDropdown = () => {
+    setIsProviderDropdownOpen(!isProviderDropdownOpen);
+  };
+
+  const selectProvider = (providerId: string) => {
+    setSelectedProvider(providerId);
+    setIsProviderDropdownOpen(false);
+  };
+
+  // Find the currently selected provider
+  const currentProvider = providers.find(p => p.id === selectedProvider) || providers[0];
+
   return (
     <div
       className="absolute top-12 left-0 mt-1 w-72 bg-[var(--background)] text-[var(--foreground)] rounded-md shadow-xl z-50 border border-[var(--gray-200)]"
@@ -54,7 +135,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       aria-labelledby="model-selector-button" // Ensure the button triggering this has this id
     >
       {/* Header */}
-      <div className="px-4 py-2 flex justify-between items-center">
+      <div className="px-4 py-2 flex justify-between items-center border-b border-[var(--gray-200)]">
         <span className="text-xs font-medium text-[var(--muted-foreground)] tracking-wider">
           Model
         </span>
@@ -62,6 +143,39 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
            {/* Tooltip needed for the Info icon */}
           <Info size={16} />
         </button>
+      </div>
+
+      {/* Provider Selector */}
+      <div className="px-4 py-3 border-b border-[var(--gray-200)]">
+        <div className="relative">
+          <button 
+            onClick={toggleProviderDropdown}
+            className="flex items-center justify-between w-full px-3 py-2 text-sm bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-md"
+          >
+            <div className="flex items-center space-x-2">
+              <span className="text-[var(--muted-foreground)]">{currentProvider.logo}</span>
+              <span>{currentProvider.name}</span>
+            </div>
+            <ChevronDown size={16} className={`text-[var(--muted-foreground)] transition-transform duration-200 ${isProviderDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Provider Dropdown */}
+          {isProviderDropdownOpen && (
+            <div className="absolute top-full left-0 mt-1 w-full bg-[var(--background)] rounded-md shadow-lg border border-[var(--gray-200)] z-10">
+              {providers.map((provider) => (
+                <button
+                  key={provider.id}
+                  onClick={() => selectProvider(provider.id)}
+                  className={`flex items-center space-x-2 w-full px-3 py-2 text-sm text-left hover:bg-[var(--accent-background)] ${provider.selected ? 'bg-[var(--accent-background)] text-[var(--accent-foreground)]' : ''}`}
+                >
+                  <span className={`text-[var(--muted-foreground)] ${provider.selected ? 'text-[var(--accent-foreground)]' : ''}`}>{provider.logo}</span>
+                  <span>{provider.name}</span>
+                  {provider.selected && <Check size={16} className="ml-auto text-[var(--accent-foreground)]" />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Model List */}
@@ -95,7 +209,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       </div>
 
       {/* Footer Link */}
-      <div className="py-1">
+      <div className="py-1 border-t border-[var(--gray-200)]">
         <button
           onClick={() => { /* TODO: Handle More Models click */ console.log('More models clicked'); onClose(); }}
           className="flex items-center justify-between w-full px-4 py-2 text-sm text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)]"
