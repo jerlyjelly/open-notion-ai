@@ -42,7 +42,8 @@ export default function HomePage() {
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const userProfileRef = useRef<HTMLDivElement>(null);
   const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
-  const [currentModelId, setCurrentModelId] = useState('gpt-4o');
+  const [currentModelId, setCurrentModelId] = useState(''); // Default to empty for Hosted
+  const [currentModelName, setCurrentModelName] = useState('Hosted'); // Default name to Hosted
   const modelSelectorRef = useRef<HTMLDivElement>(null);
 
   // Notion State
@@ -232,6 +233,7 @@ export default function HomePage() {
   const toggleModelSelectorDropdown = () => setIsModelSelectorOpen(!isModelSelectorOpen);
   const closeModelSelectorDropdown = () => setIsModelSelectorOpen(false);
   const handleSelectModel = (modelId: string) => setCurrentModelId(modelId);
+  const handleSelectModelName = (modelName: string) => setCurrentModelName(modelName);
   const openAuthModal = () => setIsAuthModalOpen(true);
   const closeAuthModal = () => setIsAuthModalOpen(false);
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
@@ -273,11 +275,18 @@ export default function HomePage() {
               aria-expanded={isModelSelectorOpen}
             >
               <span className="text-sm font-medium">
-                {currentModelId === 'gpt-4o' ? 'ChatGPT 4o' : currentModelId}
+                {currentModelId === '' ? 'Hosted' : currentModelName || currentModelId}
               </span>
               <ChevronDown size={16} className={`text-gray-500 transition-transform duration-200 ${isModelSelectorOpen ? 'rotate-180' : ''}`} />
             </button>
-            <ModelSelectorDropdown isOpen={isModelSelectorOpen} onClose={closeModelSelectorDropdown} selectedModelId={currentModelId} onSelectModel={handleSelectModel} />
+            <ModelSelectorDropdown 
+              isOpen={isModelSelectorOpen} 
+              onClose={closeModelSelectorDropdown} 
+              selectedModelId={currentModelId} 
+              onSelectModel={handleSelectModel} 
+              selectedModelName={currentModelName} 
+              onSelectModelName={handleSelectModelName} 
+            />
           </div>
           <div className="flex items-center space-x-3">
             {isAuthLoading ? (

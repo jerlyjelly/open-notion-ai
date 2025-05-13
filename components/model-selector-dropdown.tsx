@@ -23,6 +23,8 @@ interface ModelSelectorDropdownProps {
   onClose: () => void;
   selectedModelId: string;
   onSelectModel: (modelId: string) => void;
+  selectedModelName: string;
+  onSelectModelName: (modelName: string) => void;
   // TODO: Add actual model data source prop later
 }
 
@@ -49,6 +51,8 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   onClose,
   selectedModelId,
   onSelectModel,
+  selectedModelName,
+  onSelectModelName,
 }) => {
   if (!isOpen) {
     return null;
@@ -138,8 +142,9 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
     },
   ];
 
-  const handleSelectModelFromList = (modelId: string) => {
-    onSelectModel(modelId);
+  const handleSelectModelFromList = (model: Model) => {
+    onSelectModel(model.id);
+    onSelectModelName(model.name);
     onClose();
   };
 
@@ -147,6 +152,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
     const newModelName = e.target.value;
     setOpenRouterModelName(newModelName);
     onSelectModel(newModelName);
+    onSelectModelName(newModelName);
   };
 
   const toggleProviderDropdown = () => {
@@ -159,10 +165,13 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
 
     if (providerId === 'hosted') {
       onSelectModel('');
+      onSelectModelName('');
     } else if (providerId === 'openrouter') {
       onSelectModel(openRouterModelName);
+      onSelectModelName(openRouterModelName);
     } else {
       onSelectModel('');
+      onSelectModelName('');
     }
   };
 
@@ -259,7 +268,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
                 return (
                   <button
                     key={model.id}
-                    onClick={() => handleSelectModelFromList(model.id)}
+                    onClick={() => handleSelectModelFromList(model)}
                     className={`flex items-center justify-between w-full px-4 py-2 text-sm text-left 
                       hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)]
                     ${isSelected ? 'bg-[var(--accent-background)] text-[var(--accent-foreground)]' : 'text-[var(--popover-foreground)]'}`}
