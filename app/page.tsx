@@ -212,7 +212,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-col flex-grow items-center p-4 justify-center md:justify-center sm:justify-end pb-4"> 
+      <main className="flex flex-col flex-grow items-center p-4 justify-end sm:justify-end md:justify-center pb-4"> 
         {/* Input Bar Container */}
         <div className="w-full max-w-xl lg:max-w-2xl bg-[var(--gray-50)]/50 p-3 sm:p-4 rounded-xl shadow-lg border border-[var(--gray-200)]">
           {/* Top part: input field and main action buttons */}
