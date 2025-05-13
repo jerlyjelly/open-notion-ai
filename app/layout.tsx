@@ -2,8 +2,14 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import type { Viewport } from 'next';
+
 
 const inter = Inter({ subsets: ["latin"] })
+
+export const viewport: Viewport = {
+  interactiveWidget: 'resizes-content',
+};
 
 // Define metadata
 export const metadata: Metadata = {
