@@ -9,6 +9,7 @@ interface Provider {
   name: string;
   logo: React.ReactNode;
   selected: boolean;
+  models?: Model[];
 }
 
 interface Model {
@@ -27,7 +28,7 @@ interface ModelSelectorDropdownProps {
   onSelectModelName: (modelName: string) => void;
   selectedProviderId: string;
   onSelectProvider: (providerId: string) => void;
-  // TODO: Add actual model data source prop later
+  dataSource: ModelDataSource;
 }
 
 const CHATGPT_MODELS: Model[] = [
@@ -48,6 +49,91 @@ const CLAUDE_MODELS: Model[] = [
   { id: 'claude-3.5-haiku', name: '3.5 Haiku', descriptionKey: 'modelSelector.claude35HaikuDesc', defaultDescription: 'Fast and compact' },
 ];
 
+// Add data source interfaces and default data source
+export interface ProviderData {
+  id: string;
+  name: string;
+  logo: React.ReactNode;
+  models?: Model[];
+}
+export interface ModelDataSource {
+  providers: ProviderData[];
+}
+export const DEFAULT_MODEL_DATA_SOURCE: ModelDataSource = {
+  providers: [
+    {
+      id: 'hosted',
+      name: 'Hosted',
+      logo: (
+        <Image
+          src="/provider-logos/hosted-light.svg"
+          alt="Hosted Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      models: [],
+    },
+    {
+      id: 'chatgpt',
+      name: 'ChatGPT',
+      logo: (
+        <Image
+          src="/provider-logos/chatgpt-logo.svg"
+          alt="ChatGPT Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      models: CHATGPT_MODELS,
+    },
+    {
+      id: 'gemini',
+      name: 'Gemini',
+      logo: (
+        <Image
+          src="/provider-logos/gemini-logo.svg"
+          alt="Gemini Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      models: GEMINI_MODELS,
+    },
+    {
+      id: 'claude',
+      name: 'Claude',
+      logo: (
+        <Image
+          src="/provider-logos/claude-logo.svg"
+          alt="Claude Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      models: CLAUDE_MODELS,
+    },
+    {
+      id: 'openrouter',
+      name: 'OpenRouter',
+      logo: (
+        <Image
+          src="/provider-logos/openrouter-logo.svg"
+          alt="OpenRouter Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      models: [],
+    },
+  ],
+};
+
 const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   isOpen,
   onClose,
@@ -57,6 +143,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   onSelectModelName,
   selectedProviderId,
   onSelectProvider,
+  dataSource,
 }) => {
   if (!isOpen) {
     return null;
@@ -76,78 +163,10 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, selectedProviderId, selectedModelId]);
 
-  const providers: Provider[] = [
-    {
-      id: 'hosted',
-      name: 'Hosted',
-      logo: (
-        <Image
-          src="/provider-logos/hosted-light.svg"
-          alt="Hosted Logo"
-          width={16}
-          height={16}
-          className="text-[var(--muted-foreground)]"
-        />
-      ),
-      selected: selectedProvider === 'hosted'
-    },
-    {
-      id: 'chatgpt',
-      name: 'ChatGPT',
-      logo: (
-        <Image
-          src="/provider-logos/chatgpt-logo.svg"
-          alt="ChatGPT Logo"
-          width={16}
-          height={16}
-          className="text-[var(--muted-foreground)]"
-        />
-      ),
-      selected: selectedProvider === 'chatgpt'
-    },
-    {
-      id: 'gemini',
-      name: 'Gemini',
-      logo: (
-        <Image
-          src="/provider-logos/gemini-logo.svg"
-          alt="Gemini Logo"
-          width={16}
-          height={16}
-          className="text-[var(--muted-foreground)]"
-        />
-      ),
-      selected: selectedProvider === 'gemini'
-    },
-    {
-      id: 'claude',
-      name: 'Claude',
-      logo: (
-        <Image
-          src="/provider-logos/claude-logo.svg"
-          alt="Claude Logo"
-          width={16}
-          height={16}
-          className="text-[var(--muted-foreground)]"
-        />
-      ),
-      selected: selectedProvider === 'claude'
-    },
-    {
-      id: 'openrouter',
-      name: 'OpenRouter',
-      logo: (
-        <Image
-          src="/provider-logos/openrouter-logo.svg"
-          alt="OpenRouter Logo"
-          width={16}
-          height={16}
-          className="text-[var(--muted-foreground)]"
-        />
-      ),
-      selected: selectedProvider === 'openrouter'
-    },
-  ];
+  const providers: Provider[] = dataSource.providers.map((provider) => ({
+    ...provider,
+    selected: provider.id === selectedProvider,
+  }));
 
   const handleSelectModelFromList = (model: Model) => {
     onSelectModel(model.id);
@@ -195,14 +214,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
 
   const currentProviderDetails = providers.find(p => p.id === selectedProvider) || providers[0];
 
-  let currentModelsToDisplay: Model[] = [];
-  if (selectedProvider === 'chatgpt') {
-    currentModelsToDisplay = CHATGPT_MODELS;
-  } else if (selectedProvider === 'gemini') {
-    currentModelsToDisplay = GEMINI_MODELS;
-  } else if (selectedProvider === 'claude') {
-    currentModelsToDisplay = CLAUDE_MODELS;
-  }
+  const currentModelsToDisplay: Model[] = currentProviderDetails.models || [];
 
   return (
     <div

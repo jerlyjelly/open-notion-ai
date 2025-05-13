@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import CollapsibleSidebar from "@/components/collapsible-sidebar";
 import UserProfileDropdown from '@/components/user-profile-dropdown';
-import ModelSelectorDropdown from '@/components/model-selector-dropdown';
+import ModelSelectorDropdown, { DEFAULT_MODEL_DATA_SOURCE } from '@/components/model-selector-dropdown';
 import NotionIntegrationModal from '@/components/notion-integration-modal';
 import AuthModal from '@/components/auth-modal';
 import ConfirmSaveSecretModal from '@/components/confirm-save-secret-modal'; // Import the new modal
@@ -325,6 +325,7 @@ export default function HomePage() {
               onSelectModel={handleSelectModel} 
               selectedModelName={currentModelName} 
               onSelectModelName={handleSelectModelName} 
+              dataSource={DEFAULT_MODEL_DATA_SOURCE}
             />
           </div>
           <div className="flex items-center space-x-3">
