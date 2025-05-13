@@ -2,8 +2,8 @@
 
 html,
 body {
-  height: 100vh; /* Ensure full viewport height */
-  overflow-y: hidden; /* Prevent vertical scrolling */
+  height: 100svh; /* Ensure full viewport height */
+  /* overflow-y: hidden; Prevent vertical scrolling */
   margin: 0; /* Reset default browser margin */
   padding: 0; /* Reset default browser padding */
   /* The font-family will be applied by Next.js font optimization or a more specific rule */
