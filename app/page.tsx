@@ -22,6 +22,7 @@ import CollapsibleSidebar from "@/components/collapsible-sidebar";
 import UserProfileDropdown from '@/components/user-profile-dropdown'; // Import the new component
 import ModelSelectorDropdown from '@/components/model-selector-dropdown'; // Import the model selector dropdown
 import NotionIntegrationModal from '@/components/notion-integration-modal'; // Import the Notion integration modal
+import AuthModal from '@/components/auth-modal'; // Import the Auth modal
 
 export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,6 +34,7 @@ export default function HomePage() {
   const [notionSecret, setNotionSecret] = useState('');
   const [isNotionConnected, setIsNotionConnected] = useState(false);
   const [isNotionModalOpen, setIsNotionModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // State for Auth Modal
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -58,6 +60,9 @@ export default function HomePage() {
     setCurrentModelId(modelId);
     // Potentially trigger other actions, like fetching new data or updating UI elsewhere
   };
+
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
 
   // Initialize theme state based on system preference or localStorage
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -184,6 +189,14 @@ export default function HomePage() {
           />
         </div>
         <div className="flex items-center space-x-3">
+          {/* Log In Button */}
+          <button
+            onClick={openAuthModal}
+            className="px-3 py-1.5 text-sm font-medium text-[var(--foreground)] bg-[var(--btn-background)] hover:bg-[var(--btn-background-hover)] border border-[var(--gray-200)] rounded-md cursor-pointer"
+          >
+            Log In
+          </button>
+
           {/* Theme Toggle Button */}
           <button 
             onClick={toggleTheme}
@@ -275,6 +288,11 @@ export default function HomePage() {
         notionSecret={notionSecret}
         setNotionSecret={setNotionSecret}
         onConnect={handleNotionConnect}
+      />
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={closeAuthModal} 
       />
     </div>
   );
