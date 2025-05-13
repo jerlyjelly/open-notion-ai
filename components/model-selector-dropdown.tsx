@@ -48,7 +48,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
 
   return (
     <div
-      className="absolute top-12 left-0 mt-1 w-72 bg-[var(--popover-background)] text-[var(--popover-foreground)] rounded-md shadow-xl z-50 border border-[var(--gray-200)]"
+      className="absolute top-12 left-0 mt-1 w-72 bg-[var(--background)] text-[var(--foreground)] rounded-md shadow-xl z-50 border border-[var(--gray-200)]"
       role="menu"
       aria-orientation="vertical"
       aria-labelledby="model-selector-button" // Ensure the button triggering this has this id

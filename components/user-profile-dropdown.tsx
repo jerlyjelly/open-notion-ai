@@ -104,7 +104,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ isOpen, onClo
 
   return (
     <div
-      className="absolute top-12 right-0 mt-2 w-64 bg-[var(--popover-background)] text-[var(--popover-foreground)] rounded-md shadow-xl z-50 border border-[var(--gray-200)]"
+      className="absolute top-12 right-0 mt-2 w-64 bg-[var(--background)] text-[var(--foreground)] rounded-md shadow-xl z-50 border border-[var(--gray-200)]"
       role="menu"
       aria-orientation="vertical"
       aria-labelledby="user-menu-button"
@@ -141,7 +141,7 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ isOpen, onClo
           className="flex items-center w-full px-4 py-2 text-sm text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)]"
           role="menuitem"
         >
-          <span className="mr-3 text-gray-500 dark:text-gray-400">{logoutItem.icon}</span>
+          <span className="mr-3 text-[var(--muted-foreground)]">{logoutItem.icon}</span>
           {logoutItem.defaultLabel}
         </button>
       </div>

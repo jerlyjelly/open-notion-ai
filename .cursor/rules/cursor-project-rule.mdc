@@ -9,3 +9,10 @@ alwaysApply: true
      - Provide a `.env.sample` file detailing all required environment variables.
      - Maintain a comprehensive `README.md` with clear setup, deployment, and contribution guidelines.
      - It is important that you consider all backend functions to be deployed to be able to be replicated by other users when hosting themselves.
+2. Supabase:
+     - Use Supabase for hosting and database management.
+     - Ensure all backend functions are deployed to Supabase.
+     - Provide a clear README.md detailing how to set up and deploy the project to Supabase.
+     - Include a `.env.sample` file with all required environment variables without the actual values.
+     - Ensure all backend functions are included in the repository for easy self-hosting.
+     - For your information only, and for you only, the project ID for my hosted version is pvasbvykhuoxucmvuowh.
