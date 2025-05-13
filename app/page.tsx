@@ -124,9 +124,17 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen bg-[var(--background)] text-[var(--foreground)] font-sans">
+      {/* Mobile backdrop overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/30 z-30" 
+          onClick={toggleSidebar}
+          aria-hidden="true"
+        />
+      )}
       <CollapsibleSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       {/* Main content wrapper for sidebar transition */}
-      <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out h-screen overflow-hidden ${isSidebarOpen ? 'ml-72' : 'ml-0'}`}>
+      <div className={`flex flex-1 flex-col transition-all duration-300 ease-in-out h-screen overflow-hidden ${isSidebarOpen ? 'md:ml-72' : 'ml-0'}`}>
       {/* Header */}
       <header className="p-3 sm:p-4 flex justify-between items-center flex-shrink-0"> {/* Added flex-shrink-0 */}
         <div className="flex items-center space-x-2 relative" ref={modelSelectorRef}> {/* Added relative and ref */}

@@ -15,12 +15,8 @@ interface CollapsibleSidebarProps {
 }
 
 const CollapsibleSidebar: React.FC<CollapsibleSidebarProps> = ({ isOpen, toggleSidebar }) => {
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 flex h-full w-64 flex-col bg-[var(--gray-50)] text-[var(--foreground)]">
+    <aside className={`fixed inset-y-0 left-0 z-40 flex h-full w-72 flex-col bg-[var(--gray-50)] text-[var(--foreground)] shadow-lg md:shadow-none transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       {/* Sidebar Header */}
       <div className="flex h-16 items-center justify-between p-4">
         <div className="flex items-center justify-start flex-grow">
