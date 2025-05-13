@@ -80,7 +80,7 @@ export default function HomePage() {
 
   // --- Notion Logic --- 
 
-  const clearNotionState = () => {
+  const clearNotionState = useCallback(() => {
     setActiveNotionSecret(null);
     setIsNotionConnected(false);
     setIsNotionSecretCloudSaved(false);
@@ -89,23 +89,28 @@ export default function HomePage() {
       localStorage.removeItem(LOCAL_STORAGE_NOTION_SECRET_KEY);
     }
     setNotionConnectionStatusMessage('Notion disconnected.');
-  };
+  }, [setActiveNotionSecret, setIsNotionConnected, setIsNotionSecretCloudSaved, setNotionSecretInput, setNotionConnectionStatusMessage]);
 
   // Function to simulate Notion connection check
-  const checkNotionConnection = useCallback(async (secret: string) => {
+  const checkNotionConnection = useCallback(async (secret: string | null) => {
     // In a real app, you'd make an API call to Notion here
     // For now, just simulate success if secret is present
     if (secret && secret.startsWith('ntn_')) { // Basic check
       setIsNotionConnected(true);
-      setNotionConnectionStatusMessage(isNotionSecretCloudSaved ? 'Notion connected (using saved secret).': 'Notion connected for this session.');
+      setNotionConnectionStatusMessage(isNotionSecretCloudSaved ? 'Notion connected (using saved secret).' : 'Notion connected for this session.');
       return true;
     } else {
       setIsNotionConnected(false);
       setActiveNotionSecret(null); // Clear invalid secret
-      setNotionConnectionStatusMessage('Failed to connect to Notion. Invalid secret.');
+      if (secret) { // Only show "failed" if a secret was actually attempted and was bad
+        setNotionConnectionStatusMessage('Failed to connect to Notion. Invalid secret.');
+      }
+      // If secret is null (e.g. after logout or on initial load with no secret),
+      // no specific message is set here, allowing other functions like clearNotionState
+      // or initial component state to define the status message.
       return false;
     }
-  }, [isNotionSecretCloudSaved]);
+  }, [isNotionSecretCloudSaved, setActiveNotionSecret, setIsNotionConnected, setNotionConnectionStatusMessage]);
 
   // Load secret on mount or user change
   useEffect(() => {
@@ -146,6 +151,12 @@ export default function HomePage() {
     loadSecret();
   }, [user, session, checkNotionConnection]);
   
+  // Effect to clear Notion state on logout or if user is not present initially
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      clearNotionState();
+    }
+  }, [user, isAuthLoading, clearNotionState]);
 
   const handleConnectNotionLocally = async () => {
     if (!notionSecretInput) {
