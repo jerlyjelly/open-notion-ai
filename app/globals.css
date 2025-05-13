@@ -1,15 +1,5 @@
 @import "tailwindcss";
 
-html, body {
-  /* fallback */
-  height: 100vh;
-  /* dynamic height based on JS value: */
-  height: calc(var(--vh, 1vh) * 100);
-  margin: 0;
-  padding: 0;
-  overflow-y: hidden;
-}
-
 :root {
   /* Light theme (default) */
   --background: #ffffff;
@@ -48,6 +38,5 @@ html, body {
 body {
   background: var(--background);
   color: var(--foreground);
-  /* font-family: Arial, Helvetica, sans-serif; */ /* This will likely be overridden by Next/font or inter.className */
-  /* height and overflow are now handled by the html, body rule above */
+  font-family: Arial, Helvetica, sans-serif;
 }
