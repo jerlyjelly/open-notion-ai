@@ -14,6 +14,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
 
   // States for Change Password
   const [showChangePasswordView, setShowChangePasswordView] = useState(false);
@@ -39,10 +41,31 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  const handleDeleteAccount = () => {
-    console.log('Account deletion confirmed');
-    setShowDeleteConfirmation(false);
-    onClose();
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    setIsDeletingAccount(true);
+    setDeleteAccountError(null);
+
+    try {
+      const { error: functionError } = await supabase.functions.invoke('delete-user-account', {
+        method: 'POST',
+      });
+
+      if (functionError) {
+        throw functionError;
+      }
+
+      console.log('Account deletion successful via Edge Function.');
+      await supabase.auth.signOut();
+      setShowDeleteConfirmation(false);
+      onClose();
+    } catch (error: any) {
+      console.error('Error deleting account:', error);
+      setDeleteAccountError(error.message || 'Failed to delete account. Please try again.');
+    } finally {
+      setIsDeletingAccount(false);
+    }
   };
 
   const openChangePasswordView = () => {
@@ -56,7 +79,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   const closeChangePasswordView = () => {
     setShowChangePasswordView(false);
-    setPasswordUpdateMessage(null); // Clear message on close
+    setPasswordUpdateMessage(null);
+    setDeleteAccountError(null);
   };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
@@ -87,8 +111,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     setIsUpdatingPassword(false);
   };
 
-  const actionsDisabled = isLoggingOut || isUpdatingPassword;
-  const mainSettingsActionsDisabled = showChangePasswordView || isLoggingOut;
+  const actionsDisabled = isLoggingOut || isUpdatingPassword || isDeletingAccount;
+  const mainSettingsActionsDisabled = showChangePasswordView || isLoggingOut || isDeletingAccount;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -99,7 +123,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             onClick={showChangePasswordView ? closeChangePasswordView : onClose}
             className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label={showChangePasswordView ? "Back to settings" : "Close settings modal"}
-            disabled={isLoggingOut || isUpdatingPassword} // Disable close if an critical async op is running
+            disabled={isLoggingOut || isUpdatingPassword}
           >
             <X size={24} />
           </button>
@@ -140,6 +164,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             <button
               onClick={() => {
                 if (mainSettingsActionsDisabled) return;
+                setDeleteAccountError(null);
                 setShowDeleteConfirmation(true);
               }}
               className={`flex items-center w-full px-4 py-3 text-sm rounded-md border border-red-500/30 transition-colors 
@@ -229,18 +254,30 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
               <p className="text-sm text-[var(--muted-foreground)] mb-6">
                 Are you sure you want to delete your account? This action is irreversible and all your data will be permanently lost.
               </p>
+              {deleteAccountError && (
+                <div className="mb-4 p-3 text-sm rounded-md border bg-red-50 border-red-300 text-red-700 flex items-center">
+                  <AlertCircle size={18} className="mr-2" />
+                  {deleteAccountError}
+                </div>
+              )}
               <div className="flex justify-end space-x-3">
                 <button
-                  onClick={() => setShowDeleteConfirmation(false)}
-                  className="px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] bg-[var(--secondary-background)] hover:bg-[var(--accent-background)] rounded-md border border-[var(--gray-200)] transition-colors cursor-pointer"
+                  onClick={() => {
+                    setShowDeleteConfirmation(false);
+                    setDeleteAccountError(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] bg-[var(--secondary-background)] hover:bg-[var(--accent-background)] rounded-md border border-[var(--gray-200)] transition-colors cursor-pointer disabled:opacity-50"
+                  disabled={isDeletingAccount}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteAccount}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors cursor-pointer"
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors cursor-pointer disabled:opacity-50 flex items-center justify-center"
+                  disabled={isDeletingAccount}
                 >
-                  Delete My Account
+                  {isDeletingAccount ? <Loader2 size={18} className="animate-spin mr-2" /> : null}
+                  {isDeletingAccount ? 'Deleting...' : 'Delete My Account'}
                 </button>
               </div>
             </div>
