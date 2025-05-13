@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, LogOut, Lock, Trash2, AlertTriangle } from 'lucide-react';
+import { X, LogOut, Lock, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
+import { useAuth } from '@/components/auth/auth-provider';
+import { supabase } from '@/lib/supabase/client';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -9,18 +11,33 @@ interface SettingsModalProps {
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   if (!isOpen) {
     return null;
   }
 
+  const handleLogout = async () => {
+    if (!user) return;
+
+    setIsLoggingOut(true);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out from settings:', error.message);
+    }
+    setIsLoggingOut(false);
+    onClose();
+  };
+
   const handleDeleteAccount = () => {
-    // Logic for actual account deletion will go here
     console.log('Account deletion confirmed');
     setShowDeleteConfirmation(false);
-    onClose(); // Close main modal after deletion
+    onClose();
   };
+
+  const actionsDisabled = isLoggingOut;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -29,8 +46,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           <h2 className="text-xl font-semibold">Settings</h2>
           <button
             onClick={onClose}
-            className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer"
+            className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Close settings modal"
+            disabled={actionsDisabled}
           >
             <X size={24} />
           </button>
@@ -39,24 +57,31 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         <div className="space-y-4">
           {/* Log Out */}
           <button
-            onClick={() => {
-              console.log('Log out clicked');
-              // Actual log out logic will be added here
-              onClose();
-            }}
-            className="flex items-center w-full px-4 py-3 text-sm text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)] rounded-md border border-[var(--gray-200)] transition-colors cursor-pointer"
+            onClick={handleLogout}
+            className={`flex items-center w-full px-4 py-3 text-sm rounded-md border border-[var(--gray-200)] transition-colors 
+                        ${isLoggingOut ? 'justify-center cursor-wait' : 'justify-start text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)] cursor-pointer'}
+                        ${actionsDisabled && !isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={actionsDisabled}
           >
-            <LogOut size={18} className="mr-3 text-[var(--muted-foreground)]" />
-            Log Out
+            {isLoggingOut ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <>
+                <LogOut size={18} className="mr-3 text-[var(--muted-foreground)]" />
+                Log Out
+              </>
+            )}
           </button>
 
           {/* Change Password */}
           <button
             onClick={() => {
+              if (actionsDisabled) return;
               console.log('Change password clicked');
-              // UI for change password will be shown here
             }}
-            className="flex items-center w-full px-4 py-3 text-sm text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)] rounded-md border border-[var(--gray-200)] transition-colors cursor-pointer"
+            className={`flex items-center w-full px-4 py-3 text-sm rounded-md border border-[var(--gray-200)] transition-colors 
+                        ${actionsDisabled ? 'opacity-50 cursor-not-allowed text-[var(--muted-foreground)]' : 'text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)] cursor-pointer'}`}
+            disabled={actionsDisabled}
           >
             <Lock size={18} className="mr-3 text-[var(--muted-foreground)]" />
             Change Password
@@ -64,8 +89,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
           {/* Delete Account */}
           <button
-            onClick={() => setShowDeleteConfirmation(true)}
-            className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-500/10 hover:text-red-700 rounded-md border border-red-500/30 transition-colors cursor-pointer"
+            onClick={() => {
+              if (actionsDisabled) return;
+              setShowDeleteConfirmation(true)
+            }}
+            className={`flex items-center w-full px-4 py-3 text-sm rounded-md border border-red-500/30 transition-colors 
+                        ${actionsDisabled ? 'opacity-50 cursor-not-allowed text-red-600/50' : 'text-red-600 hover:bg-red-500/10 hover:text-red-700 cursor-pointer'}`}
+            disabled={actionsDisabled}
           >
             <Trash2 size={18} className="mr-3" />
             Delete Account

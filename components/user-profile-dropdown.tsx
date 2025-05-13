@@ -8,19 +8,18 @@ import {
   HelpCircle,
   FileText,
   ShieldCheck,
-  LogOut,
+  Mail
 } from 'lucide-react';
 import SettingsModal from './settings-modal';
-
-
+import { useAuth } from '@/components/auth/auth-provider';
 
 interface UserProfileDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  // Add other props like user information if needed later
 }
 
 const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   if (!isOpen && !isSettingsModalOpen) {
@@ -67,12 +66,6 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ isOpen, onClo
       defaultLabel: 'Terms & policies',
       action: () => console.log('Terms & policies clicked'),
     },
-    // {
-    //   icon: <LogOut size={18} />,
-    //   labelKey: 'userDropdown.logout',
-    //   defaultLabel: 'Log out',
-    //   action: () => console.log('Log out clicked'),
-    // },
   ];
 
   return (
@@ -84,15 +77,32 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ isOpen, onClo
           aria-orientation="vertical"
           aria-labelledby="user-menu-button"
         >
+          {user?.email && (
+            <div className="px-4 py-3 border-b border-[var(--gray-200)]">
+              <div className="flex items-center space-x-2">
+                <Mail size={16} className="text-[var(--muted-foreground)]" />
+                <p className="text-sm font-medium text-[var(--popover-foreground)] truncate" title={user.email}>
+                  {user.email}
+                </p>
+              </div>
+            </div>
+          )}
           <div className="py-1">
             {menuItems.map((item, index) => (
               <button
                 key={index}
-                onClick={() => { item.action(); item.labelKey !== 'userDropdown.settings' && onClose(); }}
-                className="flex items-center w-full px-4 py-2 text-sm text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)] cursor-pointer"
+                onClick={() => { 
+                  item.action(); 
+                  if (item.labelKey !== 'userDropdown.settings') { 
+                    onClose(); 
+                  }
+                }}
+                className={`flex items-center w-full px-4 py-2 text-sm text-left 
+                            text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)] cursor-pointer
+                          `}
                 role="menuitem"
               >
-                <span className="mr-3 text-[var(--muted-foreground)]">{item.icon}</span>
+                <span className={`mr-3 text-[var(--muted-foreground)]`}>{item.icon}</span>
                 {item.defaultLabel}
               </button>
             ))}

@@ -16,15 +16,20 @@ import {
   PanelLeftOpen,
   Check,
   X,
-  OctagonAlert
+  OctagonAlert,
+  LogOut, // Added LogOut icon
+  Loader2 // Added Loader2 for spinner
 } from 'lucide-react';
 import CollapsibleSidebar from "@/components/collapsible-sidebar";
 import UserProfileDropdown from '@/components/user-profile-dropdown'; // Import the new component
 import ModelSelectorDropdown from '@/components/model-selector-dropdown'; // Import the model selector dropdown
 import NotionIntegrationModal from '@/components/notion-integration-modal'; // Import the Notion integration modal
 import AuthModal from '@/components/auth-modal'; // Import the Auth modal
+import { useAuth } from '@/components/auth/auth-provider'; // Import useAuth
+import { supabase } from '@/lib/supabase/client'; // Import supabase client
 
 export default function HomePage() {
+  const { session, user, isLoading: isAuthLoading } = useAuth(); // Get auth state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUserProfileDropdownOpen, setIsUserProfileDropdownOpen] = useState(false);
   const userProfileRef = useRef<HTMLDivElement>(null);
@@ -189,13 +194,18 @@ export default function HomePage() {
           />
         </div>
         <div className="flex items-center space-x-3">
-          {/* Log In Button */}
-          <button
-            onClick={openAuthModal}
-            className="px-3 py-1.5 text-sm font-medium text-[var(--foreground)] bg-[var(--btn-background)] hover:bg-[var(--btn-background-hover)] border border-[var(--gray-200)] rounded-md cursor-pointer"
-          >
-            Log In
-          </button>
+          {/* Auth Button: Log In (conditionally rendered) */}
+          {/* Show loading placeholder or Log In button, User icon is always visible for dropdown */}
+          {isAuthLoading ? (
+            <div className="px-3 py-1.5 h-[31px] w-[60px] animate-pulse bg-[var(--gray-200)] rounded-md"></div> 
+          ) : !user ? (
+            <button
+              onClick={openAuthModal}
+              className="px-3 py-1.5 text-sm font-medium text-[var(--foreground)] bg-[var(--btn-background)] hover:bg-[var(--btn-background-hover)] border border-[var(--gray-200)] rounded-md cursor-pointer"
+            >
+              Log In
+            </button>
+          ) : null /* If user is logged in, no direct logout button here; User icon leads to dropdown */}
 
           {/* Theme Toggle Button */}
           <button 
@@ -217,20 +227,22 @@ export default function HomePage() {
             <Github size={18} />
           </a>
 
-          {/* User Icon and Dropdown */}
-          <div className="relative" ref={userProfileRef}>
-            <button 
-              onClick={toggleUserProfileDropdown}
-              className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
-              aria-label="User menu"
-              id="user-menu-button"
-              aria-haspopup="true"
-              aria-expanded={isUserProfileDropdownOpen}
-            >
-              <User size={18} />
-            </button>
-            <UserProfileDropdown isOpen={isUserProfileDropdownOpen} onClose={closeUserProfileDropdown} />
-          </div>
+          {/* User Icon and Dropdown - Conditionally rendered based on auth state */}
+          {!isAuthLoading && user && (
+            <div className="relative" ref={userProfileRef}>
+              <button 
+                onClick={toggleUserProfileDropdown}
+                className="p-2 text-[var(--gray-600)] hover:bg-[var(--gray-100)] rounded-full cursor-pointer"
+                aria-label="User menu"
+                id="user-menu-button"
+                aria-haspopup="true"
+                aria-expanded={isUserProfileDropdownOpen}
+              >
+                <User size={18} />
+              </button>
+              <UserProfileDropdown isOpen={isUserProfileDropdownOpen} onClose={closeUserProfileDropdown} />
+            </div>
+          )}
         </div>
       </header>
 
