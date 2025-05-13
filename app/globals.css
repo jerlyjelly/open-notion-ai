@@ -2,8 +2,6 @@
 
 html,
 body {
-  /* Fallback for legacy: */
-  height: 100vh;
   /* Modern browsers: */
   height: 100dvh;
   margin: 0;
