@@ -13,14 +13,15 @@ import {
   Github, // Added Github icon
   Plus,
   Send,
-  Search,
-  Brain,
-  ImageIcon,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Check,
+  X,
+  OctagonAlert
 } from 'lucide-react';
 import CollapsibleSidebar from "@/components/collapsible-sidebar";
 import UserProfileDropdown from '@/components/user-profile-dropdown'; // Import the new component
 import ModelSelectorDropdown from '@/components/model-selector-dropdown'; // Import the model selector dropdown
+import NotionIntegrationModal from '@/components/notion-integration-modal'; // Import the Notion integration modal
 
 export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,6 +30,9 @@ export default function HomePage() {
   const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
   const [currentModelId, setCurrentModelId] = useState('gpt-4o'); // Default model
   const modelSelectorRef = useRef<HTMLDivElement>(null);
+  const [notionSecret, setNotionSecret] = useState('');
+  const [isNotionConnected, setIsNotionConnected] = useState(false);
+  const [isNotionModalOpen, setIsNotionModalOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -120,6 +124,12 @@ export default function HomePage() {
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleNotionConnect = () => {
+    setIsNotionConnected(true);
+    // We can also clear the secret from state after connection if desired, for security
+    // setNotionSecret(''); 
   };
 
   return (
@@ -231,20 +241,23 @@ export default function HomePage() {
           </div>
 
           {/* Bottom part: action suggestions */}
-          <div className="mt-3 flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto pb-1">
-            {[
-              { icon: <Search size={14} />, textKey: 'home.searchAction', defaultText: 'Search' },
-              { icon: <Brain size={14} />, textKey: 'home.deepResearchAction', defaultText: 'Deep research' },
-              { icon: <ImageIcon size={14} />, textKey: 'home.createImageAction', defaultText: 'Create image' },
-            ].map((action, index) => (
-              <button
-                key={index}
-                className="flex-shrink-0 flex items-center space-x-1.5 px-3 py-1.5 bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-lg text-xs font-medium text-[var(--gray-700)] cursor-pointer"
-              >
-                {action.icon}
-                <span>{action.defaultText}</span>
-              </button>
-            ))}
+          <div className="mt-3 flex items-start">
+            <button
+              onClick={() => setIsNotionModalOpen(true)}
+              className="flex-shrink-0 flex items-center space-x-1.5 px-3 py-1.5 bg-[var(--gray-100)] hover:bg-[var(--gray-200)] rounded-lg text-xs font-medium text-[var(--gray-700)] cursor-pointer"
+            >
+              {isNotionConnected ? (
+                <>
+                  <Check size={14} className="text-green-500" />
+                  <span>Notion Connected</span>
+                </>
+              ) : (
+                <>
+                  <OctagonAlert size={14} className="text-red-500" />
+                  <span>Notion Not Connected</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </main>
@@ -254,6 +267,15 @@ export default function HomePage() {
         OpenNotionAI
       </footer>
       </div> {/* Closing main content wrapper */}
+
+      {/* Notion Integration Modal */}
+      <NotionIntegrationModal
+        isOpen={isNotionModalOpen}
+        onClose={() => setIsNotionModalOpen(false)}
+        notionSecret={notionSecret}
+        setNotionSecret={setNotionSecret}
+        onConnect={handleNotionConnect}
+      />
     </div>
   );
 }
