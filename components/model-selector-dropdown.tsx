@@ -39,11 +39,25 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
   }
 
   // State for selected provider
-  const [selectedProvider, setSelectedProvider] = useState('chatgpt');
+  const [selectedProvider, setSelectedProvider] = useState('hosted');
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
 
   // Provider data with SVG logos
   const providers: Provider[] = [
+    { 
+      id: 'hosted', 
+      name: 'Hosted', 
+      logo: (
+        <Image
+          src="/provider-logos/hosted-light.svg"
+          alt="Hosted Logo"
+          width={16}
+          height={16}
+          className="text-[var(--muted-foreground)]"
+        />
+      ),
+      selected: selectedProvider === 'hosted'
+    },
     { 
       id: 'chatgpt', 
       name: 'ChatGPT', 
@@ -135,7 +149,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       aria-labelledby="model-selector-button" // Ensure the button triggering this has this id
     >
       {/* Header */}
-      <div className="px-4 py-2 flex justify-between items-center border-b border-[var(--gray-200)]">
+      <div className="px-4 py-2 flex justify-between items-center border-[var(--gray-200)]">
         <span className="text-xs font-medium text-[var(--muted-foreground)] tracking-wider">
           Model
         </span>
@@ -146,7 +160,7 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
       </div>
 
       {/* Provider Selector */}
-      <div className="px-4 py-3 border-b border-[var(--gray-200)]">
+      <div className="px-4 py-2 border-b border-[var(--gray-200)]">
         <div className="relative">
           <button 
             onClick={toggleProviderDropdown}
@@ -208,16 +222,26 @@ const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
         ))}
       </div>
 
-      {/* Footer Link */}
-      <div className="py-1 border-t border-[var(--gray-200)]">
-        <button
-          onClick={() => { /* TODO: Handle More Models click */ console.log('More models clicked'); onClose(); }}
-          className="flex items-center justify-between w-full px-4 py-2 text-sm text-[var(--popover-foreground)] hover:bg-[var(--accent-background)] hover:text-[var(--accent-foreground)]"
-          role="menuitem"
+      {/* API Key Input Section */}
+      <div className="px-4 py-2 border-t border-[var(--gray-200)]">
+        <label 
+          htmlFor="apiKeyInput" 
+          className="block text-xs font-medium text-[var(--muted-foreground)] mb-1.5"
         >
-          <span>More models</span>
-          <ChevronRight size={16} className="text-[var(--muted-foreground)]" />
-        </button>
+          API Key
+        </label>
+        <input
+          type="password"
+          id="apiKeyInput"
+          name="apiKeyInput"
+          placeholder="Enter API key"
+          className="w-full px-3 py-2 text-sm bg-[var(--background)] text-[var(--foreground)] border border-[var(--gray-200)] rounded-md focus:outline-none focus:ring-1 focus:ring-[var(--accent-foreground)] focus:border-[var(--accent-foreground)] placeholder:text-[var(--muted-foreground)]"
+          autoComplete="off"
+        />
+        <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+          <Info size={12} className="inline mr-1 relative -top-px" />
+          Your API key is not stored and is only used for the current session.
+        </p>
       </div>
     </div>
   );
